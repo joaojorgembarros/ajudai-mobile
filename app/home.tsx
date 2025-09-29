@@ -1,6 +1,6 @@
 // app/home.tsx
 import { View, Text, Button, ScrollView } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { useRouter, type Href } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 
@@ -9,7 +9,7 @@ export default function Home() {
 
   async function logout() {
     await AsyncStorage.removeItem("ajudai_token");
-    router.replace("/auth/login");
+    router.replace("/auth/login" as Href);
   }
 
   return (
@@ -18,23 +18,13 @@ export default function Home() {
         Ajudaí — Home
       </Text>
 
-      {/* seus atalhos de exemplo */}
       <View style={{ gap: 8, marginBottom: 16 }}>
-        <Link href="/new-request" asChild>
-          <Button title="Novo pedido" />
-        </Link>
+        <Button title="Abrir mapa" onPress={() => router.push("/map" as Href)} />
 
-        <Link href="/proposals" asChild>
-          <Button title="Propostas" />
-        </Link>
-
-        <Link href="/chat" asChild>
-          <Button title="Chat" />
-        </Link>
-
-        <Link href="/checkout" asChild>
-          <Button title="Checkout" />
-        </Link>
+        <Button title="Novo pedido" onPress={() => router.push("/new-request" as Href)} />
+        <Button title="Propostas" onPress={() => router.push("/proposals" as Href)} />
+        <Button title="Chat" onPress={() => router.push("/chat" as Href)} />
+        <Button title="Checkout" onPress={() => router.push("/checkout" as Href)} />
       </View>
 
       <Button title="Sair" color="#ef4444" onPress={logout} />
