@@ -1,22 +1,20 @@
 // app/auth/login.tsx
-import React, { useState, useRef } from "react";
+import LoadingWorld from "@/components/LoadingWorld";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter, type Href } from "expo-router";
+import React, { useRef, useState } from "react";
 import {
-  View,
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
-  Keyboard,
+  View,
 } from "react-native";
-import { useRouter, type Href } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
-
-// ⬇️ IMPORTA O LOADING
-import LoadingWorld from "@/components/LoadingWorld";
 
 const VALID_EMAIL = "joao@gmail.com";
 const VALID_PASSWORD = "123";
@@ -35,14 +33,21 @@ export default function Login() {
       Alert.alert("Atenção", "Preencha e-mail e senha.");
       return;
     }
+
     setLoading(true);
     try {
       if (email.trim().toLowerCase() === VALID_EMAIL && password === VALID_PASSWORD) {
-        // simula latência para a animação aparecer
+        // Simula tempo para exibir animação
         await Promise.all([
           AsyncStorage.setItem("ajudai_token", "mock-token-123"),
           new Promise((r) => setTimeout(r, 3500)),
         ]);
+
+        // 🔹 Salva informações do usuário logado
+        await AsyncStorage.setItem(
+          "ajudai_user",
+          JSON.stringify({ name: "João Jorge", email: email.trim().toLowerCase() })
+        );
 
         Keyboard.dismiss();
         router.replace("/home" as Href);
@@ -56,7 +61,7 @@ export default function Login() {
 
   return (
     <>
-      {/* ⬇️ MODAL DE LOADING */}
+      {/* 🔹 Tela de carregamento com o planeta */}
       <LoadingWorld visible={loading} message="Entrando… preparando seu ambiente" />
 
       <KeyboardAvoidingView
@@ -98,7 +103,7 @@ export default function Login() {
               />
             </View>
 
-            {/* Senha com 'olhinho' */}
+            {/* Senha com olhinho */}
             <View style={{ gap: 6 }}>
               <Text style={{ fontWeight: "600" }}>Senha</Text>
               <View
@@ -153,18 +158,31 @@ export default function Login() {
 
             {/* Ações secundárias */}
             <TouchableOpacity onPress={() => router.push("/auth/register" as Href)}>
-              <Text style={{ textAlign: "center", color: "#2563eb", fontWeight: "600", marginTop: 12 }}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#2563eb",
+                  fontWeight: "600",
+                  marginTop: 12,
+                }}
+              >
                 Criar conta
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push("/auth/forgot" as Href)}>
-              <Text style={{ textAlign: "center", color: "#2563eb", marginTop: 8 }}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#2563eb",
+                  marginTop: 8,
+                }}
+              >
                 Esqueci minha senha
               </Text>
             </TouchableOpacity>
 
-            {/* Espaço extra para garantir rolamento quando teclado abre */}
+            {/* Espaço extra para rolagem */}
             <View style={{ height: 40 }} />
           </View>
         </ScrollView>
